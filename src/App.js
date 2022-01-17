@@ -1,11 +1,11 @@
-import './App.css';
-import React from 'react';
-import Search from '../src/pages/searchPage/search'
+import "./App.css";
+import React from "react";
+import SearchPage from "../src/pages/searchPage/searchPage";
 
 function App() {
   return (
     <div>
-          <Search />
+      <SearchPage />
     </div>
   );
 }

@@ -49,7 +49,6 @@ const ResultsTable = (props) => {
         <Table striped hover>
           <thead>
             <tr>
-              <th>#</th>
               <th>Transaction</th>
               <th>Wallet</th>
               <th>To</th>
@@ -59,7 +58,6 @@ const ResultsTable = (props) => {
           <tbody>
             {transactions.map((transaction, index) => (
               <tr>
-                <td key={index + 1}>{index + 1}</td>
                 <td>{transaction.hash}</td>
                 <td>{transaction.from}</td>
                 <td>{transaction.to}</td>

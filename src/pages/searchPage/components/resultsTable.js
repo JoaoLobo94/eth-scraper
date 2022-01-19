@@ -1,50 +1,90 @@
-import "./resultsTable.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Table from "react-bootstrap/Table";
+import Button from "react-bootstrap/Button";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
-const ResultsTable = () => {
+const ResultsTable = (props) => {
   const [transactions, setTransactions] = useState([]);
-  useEffect(() => {
+  const [scraperState, setScraperState] = useState(true);
+  const [page, setPage] = useState(1);
+
+  const changePage = () => {
     axios
       .get(
-        "https://api.etherscan.io/api?module=account&action=tokentx&address=0xcdA16A18d3F942571E7ba81B7D2219A6802C45A1&startblock=&endblock=99999999&page=1&offset=10&sort=asc&apikey=A8AW15HDJT3J4GM9N64QRPUAC712ZSS2T6"
+        `https://api.etherscan.io/api?module=account&action=txlist&address=${props.wallet}&startblock=${props.block}&page=${page}&offset=20&sort=asc&apikey=${process.env.REACT_APP_API}`
       )
       .then((res) => {
-        setTransactions(res.data.result);
+        if (res.data.message !== "OK") {
+          setScraperState(false);
+        } else {
+          setTransactions(res.data.result);
+        }
       })
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  const previousPage = () => {
+    if (page !== 1) {
+      setPage(page - 1);
+      changePage();
+    }
+  };
+  const nextPage = () => {
+    setPage(page + 1);
+    changePage();
+  };
+
+  useEffect(() => {
+    changePage();
   }, []);
-  return (
-    <div className="container mt-3">
-      <Table striped bordered hover variant="dark">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Transaction</th>
-            <th>Wallet</th>
-            <th>To</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {transactions.map((transaction, index) => (
+
+  if (scraperState) {
+    return (
+      <div className="p-3">
+        <Table striped hover responsive>
+          <thead>
             <tr>
-              <td key={index + 1}>{index + 1}</td>
-              <td key={transaction.hash}>{transaction.hash}</td>
-              <td key={transaction.contractAddress}>
-                {transaction.contractAddress}
-              </td>
-              <td key={transaction.to}>{transaction.to}</td>
-              <td key={transaction.value}>{transaction.value}</td>
+              <th>#</th>
+              <th>Transaction</th>
+              <th>Wallet</th>
+              <th>To</th>
+              <th>Amount</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
-    </div>
-  );
-};
+          </thead>
+          <tbody>
+            {transactions.map((transaction, index) => (
+              <tr>
+                <td key={index + 1}>{index + 1}</td>
+                <td>{transaction.hash}</td>
+                <td>{transaction.from}</td>
+                <td>{transaction.to}</td>
+                <td key={transaction.value}>
+                  {transaction.value / 1000000000000000000} ETH
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+        <Row className="justify-content-md-center mt-2">
+          <Col md="auto">
+            <Button variant="warning" onClick= {previousPage}>Previous page </Button>
+            </Col>
+            <Col md="auto">
+            <Button variant="success" onClick={nextPage}>Next page</Button>
+            </Col>
+            </Row>
+      </div>
+    );
+  } else  {
+    return (
+      <div className='container mt-3'>
+        <h1 class="text-center">There is no data to show, please reset the page</h1>
+      </div>
+    );
+}};
 
 export default ResultsTable;

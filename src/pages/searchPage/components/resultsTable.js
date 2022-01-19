@@ -4,6 +4,7 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import './resultsTable.css'
 
 const ResultsTable = (props) => {
   const [transactions, setTransactions] = useState([]);
@@ -45,7 +46,7 @@ const ResultsTable = (props) => {
   if (scraperState) {
     return (
       <div className="p-3">
-        <Table striped hover responsive>
+        <Table striped hover>
           <thead>
             <tr>
               <th>#</th>
@@ -82,7 +83,7 @@ const ResultsTable = (props) => {
   } else  {
     return (
       <div className='container mt-3'>
-        <h1 class="text-center">There is no data to show, please reset the page</h1>
+        <h1 className="text-center">There is no data to show, please reset the page</h1>
       </div>
     );
 }};
